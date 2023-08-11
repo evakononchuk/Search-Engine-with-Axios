@@ -6,19 +6,25 @@ import "./styles.css";
 
 export default function Weather(props) {
   let [city, setCity] = useState(props.city);
-  //let [message, setMessage] = useState("");
   let [temperature, setTemperature] = useState(null);
   let [description, setDescription] = useState(null);
   let [humidity, setHumidity] = useState(null);
   let [wind, setWind] = useState(null);
   let [loaded, setLoaded] = useState(false);
+  //let [error, setError] = useState(null);
 
   function showForecast(response) {
     setLoaded(true);
+    //setError(null);
     setTemperature(Math.round(response.data.main.temp));
     setDescription(response.data.weather[0].description);
     setHumidity(response.data.main.humidity);
     setWind(response.data.wind.speed);
+  }
+
+  function handleError(err) {
+    console.error({err});
+    SpeechSynthesisErrorEvent("Error Loading...");
   }
 
   function showWeather(event) {
@@ -26,7 +32,7 @@ export default function Weather(props) {
     let apiKey = "96771e971243152d6b8948878c26adde";
     let unit = "metric";
     let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=${unit}`;
-    axios.get(url).then(showForecast);
+    axios.get(url).then(showForecast).catch(handleError);
   }
 
   function getCity(event) {
